@@ -20,13 +20,26 @@ export interface AppState {
   todos: Array<Todo>;
 }
 
+/**
+ * Sort Todo[] by createdTimestamp DESC
+ */
+const sortTodos = (todos: Array<Todo>): Array<Todo> => {
+  return todos.sort((a: Todo, b: Todo) => {
+    if (a.createdTimestamp === b.createdTimestamp) {
+      return 0;
+    }
+    return a.createdTimestamp < b.createdTimestamp ? 1 : -1;
+  });
+};
+
 export const App: React.FC = () => {
   const [todos, setTodos] = React.useState<Todo[]>([]);
 
   React.useEffect(() => {
     (async () => {
       const response = await fetch('http://localhost:3001/todos');
-      setTodos(await response.json());
+      const todos = await response.json();
+      setTodos(sortTodos(todos));
     })();
   }, []);
 
@@ -50,7 +63,7 @@ export const App: React.FC = () => {
       );
       return text;
     }
-    setTodos([...todos, await response.json()]);
+    setTodos([await response.json(), ...todos]);
     return '';
   };
 
