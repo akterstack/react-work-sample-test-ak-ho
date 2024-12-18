@@ -1,4 +1,4 @@
-import {createContext, useContext, useEffect, useState} from 'react';
+import {createContext, ReactNode, useContext, useEffect, useState} from 'react';
 import {Todo} from './types';
 
 const sortTodos = (todos: Array<Todo>): Array<Todo> => {
@@ -17,7 +17,7 @@ export function useStoreReducer(): AppStore {
   const [todos, setTodos] = useState<Todo[]>([]);
   const [totalDone, setTotalDone] = useState<number>(0);
 
-  const countDoneTodos = (todos: Todo[]) =>
+  const countCompletedTodos = (todos: Todo[]) =>
     todos.filter(todo => todo.done).length;
 
   const initTodos = (todos: Todo[]) => {
@@ -28,8 +28,14 @@ export function useStoreReducer(): AppStore {
     setTodos([todo, ...todos]);
   };
 
+  const updateTodo = (modifiedTodo: Todo) => {
+    setTodos(
+      todos.map(todo => (todo.id === modifiedTodo.id ? modifiedTodo : todo))
+    );
+  };
+
   useEffect(() => {
-    setTotalDone(countDoneTodos(todos));
+    setTotalDone(countCompletedTodos(todos));
   }, [todos]);
 
   return {
@@ -37,6 +43,7 @@ export function useStoreReducer(): AppStore {
     totalDone,
     initTodos,
     addTodo,
+    updateTodo,
   };
 }
 
@@ -48,6 +55,7 @@ type AppState = {
 type AppStore = AppState & {
   initTodos: (todos: Todo[]) => void;
   addTodo: (todo: Todo) => void;
+  updateTodo: (todo: Todo) => void;
 };
 
 const emptyTodoAppContext: AppStore = {
@@ -55,6 +63,7 @@ const emptyTodoAppContext: AppStore = {
   totalDone: 0,
   initTodos: (todos: Todo[]) => {},
   addTodo: (todo: Todo) => {},
+  updateTodo: (todo: Todo) => {},
 };
 
 export const AppStoreContext = createContext<AppStore>(emptyTodoAppContext);
