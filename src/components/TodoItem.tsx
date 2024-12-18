@@ -15,12 +15,14 @@ export interface TodoItemProps {
   className?: string;
 }
 
-const _TodoItem: React.FC<TodoItemProps> = ({todo, className}) => (
-  <li data-cy='TodoItem' className={className}>
-    <TodoCheckbox type='checkbox' checked={todo.done} />
-    <TodoText done={todo.done}>{todo.text}</TodoText>
-  </li>
-);
+const _TodoItem: React.FC<TodoItemProps> = ({todo, className}) => {
+  return (
+    <li data-cy='TodoItem' className={className}>
+      <TodoCheckbox type='checkbox' checked={todo.done} />
+      <TodoText done={todo.done}>{todo.text}</TodoText>
+    </li>
+  );
+};
 
 export const TodoItem = styled(_TodoItem)`
   display: flex;

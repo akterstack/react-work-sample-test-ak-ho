@@ -1,5 +1,7 @@
 import React from 'react';
 import styled from 'styled-components';
+import {createTodo} from '../api';
+import {useStore} from '../store';
 
 const Input = styled.input`
   flex-grow: 1;
@@ -13,11 +15,8 @@ const AddButton = styled.button`
   cursor: pointer;
 `;
 
-export type OnSubmit = (text: string) => Promise<string>;
-
 export interface TodoInputProps {
   className?: string;
-  onSubmit: OnSubmit;
   placeholder?: string;
 }
 
@@ -25,13 +24,20 @@ export const DEFAULT_PLACEHOLDER = 'todo title';
 
 const _TodoInput: React.FC<TodoInputProps> = ({
   className,
-  onSubmit,
   placeholder = DEFAULT_PLACEHOLDER,
 }) => {
+  const {addTodo} = useStore();
   const [text, setText] = React.useState('');
 
   const handleTextInput = (e: React.FormEvent<HTMLInputElement>) => {
     setText(e.currentTarget.value);
+  };
+
+  const handleAddTodo = async () => {
+    if (!text) return;
+    const todo = await createTodo(text);
+    addTodo(todo);
+    setText('');
   };
 
   return (
@@ -42,9 +48,7 @@ const _TodoInput: React.FC<TodoInputProps> = ({
         value={text}
         onChange={handleTextInput}
       />
-      <AddButton onClick={async () => text && setText(await onSubmit(text))}>
-        +
-      </AddButton>
+      <AddButton onClick={handleAddTodo}>+</AddButton>
     </div>
   );
 };

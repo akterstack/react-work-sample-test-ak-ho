@@ -6,9 +6,7 @@ import userEvent from '@testing-library/user-event';
 test('invokes callback on button click and applies return value', async () => {
   const user = userEvent.setup();
   const onSubmit = jest.fn(async () => 'after');
-  const {getByText, getByPlaceholderText} = render(
-    <TodoInput onSubmit={onSubmit} />
-  );
+  const {getByText, getByPlaceholderText} = render(<TodoInput />);
 
   const input = getByPlaceholderText(DEFAULT_PLACEHOLDER);
   expect(input).toBeInTheDocument();
